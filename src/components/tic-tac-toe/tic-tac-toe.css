@@ -70,3 +70,11 @@ p {
     border-radius: 2px;
     border: none;
 }
+
+.ai_title{
+    background: linear-gradient(to bottom, #d176cd, #50457e);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

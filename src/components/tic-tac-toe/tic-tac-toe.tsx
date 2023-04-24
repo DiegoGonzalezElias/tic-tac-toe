@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
 import Board from './board'
 import './tic-tac-toe.css'
+import { getCleverMoves } from './util';
 
 type BoardArray = Array<Array<string | null>>;
 
-const makeComputerMove =(board:BoardArray): [number, number]=>{
+/* const makeComputerMove =(board:BoardArray): [number, number]=>{
   const emptyCells:[number, number][] = [];
   board.forEach((row, rowIndex)=>{
     row.forEach((cell, cellIndex)=> {
@@ -17,7 +18,7 @@ const makeComputerMove =(board:BoardArray): [number, number]=>{
   const randomIndex = Math.floor(Math.random() * emptyCells.length)
   return emptyCells[randomIndex];
 
-}
+} */
 
 const checkWinner = (board:BoardArray): string | null =>{
   const lines =[
@@ -75,14 +76,24 @@ export default function TicTacToe() {
 
     //computer's move
     if(!newWinner){
-      const [computerRow, computerCol] = makeComputerMove(updatedPlayerBoard);
-      const updatedComputerBoard = updatedPlayerBoard.map((newRow, rowIndex) => 
+      /* const [computerRow, computerCol] = makeComputerMove(updatedPlayerBoard); */
+
+      const nextPlayer = player === "X" ? "O" : "X";
+      const bestMove = getCleverMoves(updatedPlayerBoard, nextPlayer, checkWinner);
+
+      /* const updatedComputerBoard = updatedPlayerBoard.map((newRow, rowIndex) => 
         newRow.map((cell, cellIndex) => 
           rowIndex === computerRow && cellIndex === computerCol ? 'O' : cell
-      ));
+      )); */
+
       setTimeout(()=>{
-        setBoard(updatedComputerBoard);
-        setWinner(checkWinner(updatedComputerBoard));
+        const aiBoard = updatedPlayerBoard.map((r, rowIndex) =>
+          r.map((c, colIndex) => 
+            rowIndex === bestMove?.[0] && colIndex === bestMove[1] ? nextPlayer : c
+          )
+        )
+        setBoard(aiBoard);
+        setWinner(checkWinner(aiBoard));
       },200)
      
     }
@@ -97,7 +108,7 @@ export default function TicTacToe() {
 
   return (
     <div className='game'>
-        <h1>Tic-Tac-Toe</h1>
+        <h1><span className='ai_title'>AI</span> Tic-Tac-Toe</h1>
         <Board board={board} handleClick={handleOnClick}/>
         {winner && <p>{winner === "X" ? "You Win" : "AI Wins"}</p>}
         {isNoWinner && <p>It's a tie</p>}
